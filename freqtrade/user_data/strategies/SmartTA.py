@@ -41,6 +41,9 @@ class SmartTA(IStrategy):
     # Stoploss:
     stoploss = -0.7
 
+    # enable short
+    can_short = True
+
     # Trailing stop:
     trailing_stop = True
     trailing_stop_positive = 0.02
@@ -140,7 +143,7 @@ class SmartTA(IStrategy):
     def leverage(self, pair: str, current_time: datetime, current_rate: float,
                  proposed_leverage: float, max_leverage: float, entry_tag: Optional[str], side: str,
                  **kwargs) -> float:
-        
+
         return 2.0
 
     @staticmethod

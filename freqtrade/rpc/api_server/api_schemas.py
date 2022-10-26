@@ -450,11 +450,13 @@ class Health(BaseModel):
 class ConfigPayload(BaseModel):
     max_open_trades: int
     stake_currency: str
+    fiat_display_currency: str
     stake_amount: Any
     amend_last_stake_amount: bool
     tradable_balance_ratio: float
     dry_run: bool
     cancel_open_orders_on_exit: bool
+    strategy: str
     trading_mode: str
     margin_mode: str
     unfilledtimeout: Dict
