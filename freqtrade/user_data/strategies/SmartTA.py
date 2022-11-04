@@ -32,9 +32,9 @@ class SmartTA(IStrategy):
 
     # ROI table:
     minimal_roi = {
-        "0": 0.234,
-        "1704": 0.162,
-        "3712": 0.102,
+        "0": 0.117,
+        "1704": 0.081,
+        "3712": 0.051,
         "5605": 0
     }
 
@@ -46,8 +46,8 @@ class SmartTA(IStrategy):
 
     # Trailing stop:
     trailing_stop = True
-    trailing_stop_positive = 0.02
-    trailing_stop_positive_offset = 0.04
+    trailing_stop_positive = 0.01
+    trailing_stop_positive_offset = 0.02
     trailing_only_offset_is_reached = True
 
     timeframe = "4h"
