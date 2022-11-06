@@ -71,39 +71,27 @@ class SmartTA(IStrategy):
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         for multiplier in self.buy_m1.range:
             for period in self.buy_p1.range:
-                dataframe[f"supertrend_1_buy_{multiplier}_{period}"] = self.supertrend(
-                    dataframe, multiplier, period
-                )["STX"]
+                dataframe[f"supertrend_1_buy_{multiplier}_{period}"] = self.supertrend(dataframe, multiplier, period)["STX"]
 
         for multiplier in self.buy_m2.range:
             for period in self.buy_p2.range:
-                dataframe[f"supertrend_2_buy_{multiplier}_{period}"] = self.supertrend(
-                    dataframe, multiplier, period
-                )["STX"]
+                dataframe[f"supertrend_2_buy_{multiplier}_{period}"] = self.supertrend(dataframe, multiplier, period)["STX"]
 
         for multiplier in self.buy_m3.range:
             for period in self.buy_p3.range:
-                dataframe[f"supertrend_3_buy_{multiplier}_{period}"] = self.supertrend(
-                    dataframe, multiplier, period
-                )["STX"]
+                dataframe[f"supertrend_3_buy_{multiplier}_{period}"] = self.supertrend(dataframe, multiplier, period)["STX"]
 
         for multiplier in self.sell_m1.range:
             for period in self.sell_p1.range:
-                dataframe[f"supertrend_1_sell_{multiplier}_{period}"] = self.supertrend(
-                    dataframe, multiplier, period
-                )["STX"]
+                dataframe[f"supertrend_1_sell_{multiplier}_{period}"] = self.supertrend(dataframe, multiplier, period)["STX"]
 
         for multiplier in self.sell_m2.range:
             for period in self.sell_p2.range:
-                dataframe[f"supertrend_2_sell_{multiplier}_{period}"] = self.supertrend(
-                    dataframe, multiplier, period
-                )["STX"]
+                dataframe[f"supertrend_2_sell_{multiplier}_{period}"] = self.supertrend(dataframe, multiplier, period)["STX"]
 
         for multiplier in self.sell_m3.range:
             for period in self.sell_p3.range:
-                dataframe[f"supertrend_3_sell_{multiplier}_{period}"] = self.supertrend(
-                    dataframe, multiplier, period
-                )["STX"]
+                dataframe[f"supertrend_3_sell_{multiplier}_{period}"] = self.supertrend(dataframe, multiplier, period)["STX"]
 
         return dataframe
 
@@ -117,9 +105,9 @@ class SmartTA(IStrategy):
             "enter_long"] = 1
 
         dataframe.loc[
-            (dataframe[f"supertrend_1_sell_{self.sell_m1.value}_{self.sell_p1.value}"] == "down")
-            & (dataframe[f"supertrend_2_sell_{self.sell_m2.value}_{self.sell_p2.value}"] == "down")
-            & (dataframe[f"supertrend_3_sell_{self.sell_m3.value}_{self.sell_p3.value}"] == "down")
+            (dataframe[f"supertrend_1_buy_{self.buy_m1.value}_{self.buy_p1.value}"] == "down")
+            & (dataframe[f"supertrend_2_buy_{self.buy_m2.value}_{self.buy_p2.value}"] == "down")
+            & (dataframe[f"supertrend_3_buy_{self.buy_m3.value}_{self.buy_p3.value}"] == "down")
             & (dataframe["volume"] > 0),
             "enter_short"] = 1
 
@@ -133,9 +121,9 @@ class SmartTA(IStrategy):
             "exit_long"] = 1
 
         dataframe.loc[
-            (dataframe[f"supertrend_1_buy_{self.buy_m1.value}_{self.buy_p1.value}"] == "up")
-            & (dataframe[f"supertrend_2_buy_{self.buy_m2.value}_{self.buy_p2.value}"] == "up")
-            & (dataframe[f"supertrend_3_buy_{self.buy_m3.value}_{self.buy_p3.value}"] == "up"),
+            (dataframe[f"supertrend_1_sell_{self.sell_m1.value}_{self.sell_p1.value}"] == "up")
+            & (dataframe[f"supertrend_2_sell_{self.sell_m2.value}_{self.sell_p2.value}"] == "up")
+            & (dataframe[f"supertrend_3_sell_{self.sell_m3.value}_{self.sell_p3.value}"] == "up"),
             "exit_short"] = 1
 
         return dataframe
