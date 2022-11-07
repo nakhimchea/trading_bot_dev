@@ -209,3 +209,7 @@ To run this bot we recommend you a cloud instance with a minimum of:
 - [Docker](https://www.docker.com/products/docker) (Recommended)
 # trading_bot_server
 # trading_bot_server
+# trading_bot_dev
+# trading_bot_dev
+# trading_bot_dev
+# trading_bot_dev
