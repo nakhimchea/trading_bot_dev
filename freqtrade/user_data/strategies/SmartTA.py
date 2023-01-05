@@ -1,5 +1,6 @@
 import datetime
 from typing import Optional
+from freqtrade.persistence import Trade
 
 from freqtrade.strategy import IStrategy, IntParameter
 from pandas import DataFrame
@@ -51,7 +52,7 @@ class SmartTA(IStrategy):
     trailing_stop_positive_offset = 0.01
     trailing_only_offset_is_reached = True
 
-    timeframe = "4h"
+    timeframe = "6h"
     startup_candle_count = 18
 
     buy_m1 = IntParameter(1, 7, default=4)
@@ -69,7 +70,11 @@ class SmartTA(IStrategy):
     sell_p3 = IntParameter(7, 21, default=18)
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        dataframe['peak_bottom'] = self.smartexit(dataframe)['peak_bottom']
+        # Reverse Candle Detection (Stochastic)
+        stochd = ta.STOCHF(dataframe, fastk_period=3)
+        reversed_stochd = 100 - stochd
+        dataframe['stochd'] = stochd.fastk * 1.3 - 15
+        dataframe['stochd_re'] = reversed_stochd.fastk * 1.3 - 15
 
         for multiplier in self.buy_m1.range:
             for period in self.buy_p1.range:
@@ -98,16 +103,15 @@ class SmartTA(IStrategy):
         return dataframe
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        # Reverse Mode
+        # if metadata['pair'] == 'SOL/USDT' or metadata['pair'] == 'ALGO/USDT':
+
+        # Forward Mode
         dataframe.loc[
             (dataframe[f"supertrend_1_buy_{self.buy_m1.value}_{self.buy_p1.value}"] == "up")
             & (dataframe[f"supertrend_2_buy_{self.buy_m2.value}_{self.buy_p2.value}"] == "up")
             & (dataframe[f"supertrend_3_buy_{self.buy_m3.value}_{self.buy_p3.value}"] == "up")
-            & (dataframe['peak_bottom'] != 'P0')
-            & (dataframe['peak_bottom'] != 'P1')
-            & (dataframe['peak_bottom'] != 'P2')
-            & (dataframe['peak_bottom'] != 'P3')
-            & (dataframe['peak_bottom'] != 'P4')
-            & (dataframe['peak_bottom'] != 'P5')
+            & (dataframe['stochd'] > 85)
             & (dataframe["volume"] > 0),
             "enter_long"] = 1
 
@@ -115,12 +119,7 @@ class SmartTA(IStrategy):
             (dataframe[f"supertrend_1_buy_{self.buy_m1.value}_{self.buy_p1.value}"] == "down")
             & (dataframe[f"supertrend_2_buy_{self.buy_m2.value}_{self.buy_p2.value}"] == "down")
             & (dataframe[f"supertrend_3_buy_{self.buy_m3.value}_{self.buy_p3.value}"] == "down")
-            & (dataframe['peak_bottom'] != 'B0')
-            & (dataframe['peak_bottom'] != 'B1')
-            & (dataframe['peak_bottom'] != 'B2')
-            & (dataframe['peak_bottom'] != 'B3')
-            & (dataframe['peak_bottom'] != 'B4')
-            & (dataframe['peak_bottom'] != 'B5')
+            & (dataframe['stochd_re'] > 85)
             & (dataframe["volume"] > 0),
             "enter_short"] = 1
 
@@ -140,6 +139,13 @@ class SmartTA(IStrategy):
             "exit_short"] = 1
 
         return dataframe
+
+    def custom_exit(self, pair: str, trade: 'Trade', current_time: 'datetime', current_rate: float,
+                    current_profit: float, **kwargs):
+
+        # Sell any positions at a loss if they are held for more than one day.
+        if current_profit < -0.3 and (current_time - trade.open_date_utc).days >= 6:
+            return 'unclog'
 
     def leverage(self, pair: str, current_time: datetime, current_rate: float,
                  proposed_leverage: float, max_leverage: float, entry_tag: Optional[str], side: str,
