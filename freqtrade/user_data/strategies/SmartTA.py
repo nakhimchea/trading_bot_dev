@@ -6,7 +6,6 @@ from freqtrade.strategy import IStrategy, IntParameter
 from pandas import DataFrame
 import talib.abstract as ta
 import numpy as np
-import scipy
 
 
 class SmartTA(IStrategy):

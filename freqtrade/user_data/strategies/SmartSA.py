@@ -4,6 +4,8 @@ from threading import Thread
 import json
 from datetime import datetime
 
+import matplotlib.pyplot as plot
+
 
 def request_lunar_crush():
     start = datetime.now()
@@ -55,11 +57,26 @@ def request_lunar_crush():
         outfile.write(json_object)
 
 
+def plot_lunar_graph():
+    data = json.load(open('lunarcrush_extraction.json'))
+    pch = data[0]["pch"]
+    acr = data[0]["acr"]
+    tc = data[0]["tc"]
+
+    fig, axes = plot.subplots(2, 1)
+    axes[0].plot(tc, pch, 'tab:orange')
+    axes[0].set_title("Price")
+    axes[1].plot(tc, acr, 'tab:green')
+    axes[1].set_title("AltRank")
+    plot.show()
+
+
 def main():
-    while True:
-        thr = Thread(target=request_lunar_crush)
-        thr.start()
-        time.sleep(2)
+    # while True:
+    #     thr = Thread(target=request_lunar_crush)
+    #     thr.start()
+    #     time.sleep(2)
+    plot_lunar_graph()
 
 
 if __name__ == "__main__":
