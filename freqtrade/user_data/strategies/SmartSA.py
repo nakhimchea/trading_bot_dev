@@ -4,7 +4,7 @@ from threading import Thread
 import json
 from datetime import datetime
 
-# import matplotlib.pyplot as plot
+import matplotlib.pyplot as plot
 import requests
 
 
@@ -65,28 +65,28 @@ def request_lunar_crush():
         outfile.write(json_object)
 
 
-# def plot_lunar_graph():
-    # data = json.load(open('lunarcrush.json'))
-    # pch = data[0]["pch"]
-    # acr = data[0]["acr"]
-    # dt = data[0]["dt"]
-    #
-    # fig, axes = plot.subplots(2, 1)
-    # axes[0].plot(dt, pch, 'tab:orange')
-    # axes[0].set_title("Price")
-    # axes[1].plot(dt, acr, 'tab:green')
-    # axes[1].set_title("AltRank")
-    # plot.show()
+def plot_lunar_graph():
+    data = json.load(open('lunarcrush.json'))
+    pch = data[0]["pch"]
+    acr = data[0]["acr"]
+    dt = data[0]["dt"]
+
+    fig, axes = plot.subplots(2, 1)
+    axes[0].plot(dt, pch, 'tab:orange')
+    axes[0].set_title("Price")
+    axes[1].plot(dt, acr, 'tab:green')
+    axes[1].set_title("AltRank")
+    plot.show()
 
 
 def main():
-    print(8 - (int(time.time()) % 10))
-    time.sleep(8 - (int(time.time()) % 10))  # 2 sec is for Thread Initialization
+    print(898 - (int(time.time()) % 900))
+    plot_lunar_graph()
+    time.sleep(898 - (int(time.time()) % 900))  # 2 sec is for Thread Initialization
     while True:
         thr = Thread(target=request_lunar_crush)
         thr.start()
-        # plot_lunar_graph()
-        time.sleep(10)
+        time.sleep(900)
 
 
 if __name__ == "__main__":
