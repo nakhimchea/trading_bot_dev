@@ -1,6 +1,6 @@
 # This is an integration of LunarCrush APIs to Freqtrade to execute spot market orders
-import time
-from threading import Thread
+# import time
+# from threading import Thread
 import json
 from datetime import datetime
 
@@ -26,18 +26,19 @@ def request_lunar_crush():
         no_data = True
 
     dt_requested = lunarcrush["config"]["generated"]
+    dt_requested = int(dt_requested / 100) * 100
     print(dt_requested)
     for datamap in lunarcrush["data"]:
         data = {
             "id": datamap["id"],
             "s": datamap["s"],
             "n": datamap["n"],
-            "pch": datamap["pch"],
+            "p": datamap["p"],
             "mc": datamap["mc"],
             "acr": datamap["acr"],
         }
         if no_data:
-            data["pch"] = [data["pch"]]
+            data["p"] = [data["p"]]
             data["mc"] = [data["mc"]]
             data["acr"] = [data["acr"]]
             data["dt"] = [dt_requested]
@@ -46,12 +47,12 @@ def request_lunar_crush():
         else:
             for coin in coin_list:
                 if coin["id"] == data["id"] and coin["s"] == data["s"] and coin["n"] == data["n"]:
-                    if coin["pch"].__len__() >= 192:
-                        coin["pch"].pop(0)
+                    if coin["p"].__len__() >= 192:
+                        coin["p"].pop(0)
                         coin["mc"].pop(0)
                         coin["acr"].pop(0)
                         coin["dt"].pop(0)
-                    coin["pch"].append(data["pch"])
+                    coin["p"].append(data["p"])
                     coin["mc"].append(data["mc"])
                     coin["acr"].append(data["acr"])
                     coin["dt"].append(dt_requested)
@@ -67,26 +68,27 @@ def request_lunar_crush():
 
 def plot_lunar_graph():
     data = json.load(open('lunarcrush.json'))
-    pch = data[0]["pch"]
-    acr = data[0]["acr"]
-    dt = data[0]["dt"]
+    p = data[1]["p"]
+    acr = data[1]["acr"]
+    dt = data[1]["dt"]
 
     fig, axes = plot.subplots(2, 1)
-    axes[0].plot(dt, pch, 'tab:orange')
+    axes[0].plot(dt, p, 'tab:orange')
     axes[0].set_title("Price")
     axes[1].plot(dt, acr, 'tab:green')
     axes[1].set_title("AltRank")
+    fig.tight_layout(pad=1)
     plot.show()
 
 
 def main():
-    print(898 - (int(time.time()) % 900))
+    # print(898 - (int(time.time()) % 900))
     plot_lunar_graph()
-    time.sleep(898 - (int(time.time()) % 900))  # 2 sec is for Thread Initialization
-    while True:
-        thr = Thread(target=request_lunar_crush)
-        thr.start()
-        time.sleep(900)
+    # time.sleep(898 - (int(time.time()) % 900))  # 2 sec is for Thread Initialization
+    # while True:
+    #     thr = Thread(target=request_lunar_crush)
+    #     thr.start()
+    #     time.sleep(900)
 
 
 if __name__ == "__main__":
