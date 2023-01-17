@@ -1,5 +1,5 @@
 # This is an integration of LunarCrush APIs to Freqtrade to execute spot market orders
-import datetime
+from datetime import datetime
 from freqtrade.persistence import Trade
 
 from freqtrade.strategy import IStrategy
@@ -50,7 +50,7 @@ class SmartSA(IStrategy):
 
         return dataframe
 
-    def custom_exit(self, pair: str, trade: 'Trade', current_time: 'datetime', current_rate: float,
+    def custom_exit(self, pair: str, trade: Trade, current_time: datetime, current_rate: float,
                     current_profit: float, **kwargs):
 
         # Sell any positions at a loss if they are held for more than one day.
