@@ -34,7 +34,7 @@ def request_lunar_crush():
         # Index Processing
         data = {
             "id": datamap["id"],
-            "s": datamap["s"],
+            "s": datamap["s"].replace(' ', ''),
             "n": datamap["n"],
             "p": datamap["p"],
             "mc": datamap["mc"],
@@ -44,12 +44,12 @@ def request_lunar_crush():
         coin = {}
         # Check if there is no file yet
         try:
-            coin = json.load(open(os.path.join(data_path, data["s"].split('/')[0] + ".json")))
+            coin = json.load(open(os.path.join(data_path, data["s"].split('/')[0].replace(' ', '') + ".json")))
         except FileNotFoundError:
             no_file = True
 
         if no_file:
-            print("Data file is empty. Creating file to store ", data["s"].split('/')[0])
+            print("Data file is empty. Creating file to store ", data["s"].split('/')[0].replace(' ', ''))
             data["p"] = [data["p"]]
             data["mc"] = [data["mc"]]
             data["acr"] = [data["acr"]]
@@ -73,7 +73,7 @@ def request_lunar_crush():
 
         # Serializing and Writing to json file
         json_object = json.dumps(coin, indent=2)
-        with open(os.path.join(data_path, data["s"].split('/')[0] + ".json"), "w") as outfile:
+        with open(os.path.join(data_path, data["s"].split('/')[0].replace(' ', '') + ".json"), "w") as outfile:
             outfile.write(json_object)
 
 

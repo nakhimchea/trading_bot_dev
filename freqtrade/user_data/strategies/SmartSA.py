@@ -25,7 +25,7 @@ def quote_symbols_list(quote='USDT'):
 
 
 def going2trade():
-    data_path = os.getcwd() + '/../data/lunarcrush/'
+    data_path = os.path.join(os.getcwd(), 'lunarcrush')
     files = os.listdir(data_path)
     usdt_pairs = quote_symbols_list('USDT')
     print(usdt_pairs.__len__())
@@ -70,7 +70,7 @@ class SmartSA(IStrategy):
     trailing_only_offset_is_reached = True
 
     # Timeframe is not necessary
-    timeframe = "15m"
+    timeframe = "1m"
     startup_candle_count = 1
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
@@ -78,15 +78,10 @@ class SmartSA(IStrategy):
         return dataframe
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        # if metadata['pair'] == 'SOL/USDT' or metadata['pair'] == 'ALGO/USDT':
+        # metadata['pair'] == 'SOL/USDT'  -------  metadata['pair'] == 'ALGO/USDT'
 
-        # Data Preprocessing
-        # process_data()
-
-        # Plotting
         # going2trade()
 
-        # Forward Mode
         dataframe.loc[
             (),
             "enter_long"] = 1
@@ -96,7 +91,6 @@ class SmartSA(IStrategy):
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         # No Exit
         dataframe.loc[(), 'exit_long'] = 1
-
         return dataframe
 
     def custom_exit(self, pair: str, trade: Trade, current_time: datetime, current_rate: float,
