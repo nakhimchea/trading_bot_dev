@@ -1,9 +1,52 @@
 # This is an integration of LunarCrush APIs to Freqtrade to execute spot market orders
+import json
+import os
+import requests
 from datetime import datetime
-from freqtrade.persistence import Trade
 
-from freqtrade.strategy import IStrategy
 from pandas import DataFrame
+
+from freqtrade.persistence import Trade
+from freqtrade.strategy import IStrategy
+
+
+def get_exchange_info():
+    base_url = 'https://api.binance.com'
+    endpoint = '/api/v3/exchangeInfo'
+
+    return requests.get(base_url + endpoint).json()
+
+
+def quote_symbols_list(quote='USDT'):
+    symbols = get_exchange_info()['symbols']
+    pairs = {s['symbol']: s for s in symbols if quote in s['symbol']}
+
+    return pairs.keys()
+
+
+def going2trade():
+    data_path = os.getcwd() + '/../data/lunarcrush/'
+    files = os.listdir(data_path)
+    usdt_pairs = quote_symbols_list('USDT')
+    print(usdt_pairs.__len__())
+    to_trade = []
+    for file in files:
+        data = json.load(open(data_path + file))
+        acr = data["acr"]
+
+        if max(acr) < 1500 and min(acr) < 150 and acr[acr.__len__() - 1] < 150:
+            symbol = file.split('.')[0]
+            stablecoins = json.load(open('stablecoins.json'))["symbols"]
+            if symbol not in stablecoins:
+                pair = symbol+"USDT"
+                if pair in usdt_pairs:
+                    to_trade.append(pair)
+
+            # p = data["p"]
+            # dt = data["dt"]
+            # plot_lunar_graph(acr, p, dt)
+
+    print(to_trade)
 
 
 class SmartSA(IStrategy):
@@ -36,6 +79,12 @@ class SmartSA(IStrategy):
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         # if metadata['pair'] == 'SOL/USDT' or metadata['pair'] == 'ALGO/USDT':
+
+        # Data Preprocessing
+        # process_data()
+
+        # Plotting
+        # going2trade()
 
         # Forward Mode
         dataframe.loc[
